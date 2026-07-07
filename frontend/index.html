@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Reflective Decision Companion</title>
+<style>
+  :root {
+    --bg: #faf7f2;
+    --card: #ffffff;
+    --ink: #2c2c2a;
+    --ink-soft: #6b6a63;
+    --accent: #534AB7;
+    --accent-soft: #eeedfe;
+    --border: #e4e0d6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    display: flex;
+    justify-content: center;
+    padding: 24px 12px;
+    min-height: 100vh;
+    background: radial-gradient(ellipse at top, #2a2456 0%, #1a1633 55%, #120f26 100%);
+    position: relative;
+    overflow-x: hidden;
+  }
+  /* --- Celestial atmosphere: constellations + scattered stars + shooting stars, fixed behind everything --- */
+  .sky {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .constellations {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+  .star {
+    position: absolute;
+    border-radius: 50%;
+    background: #f4ecc8;
+    animation: twinkle 4s ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0.22; }
+    50% { opacity: 0.85; }
+  }
+  .cline { stroke: #8478c9; stroke-width: 0.6; opacity: 0.5; fill: none; }
+  .cgroup { animation: cblink 4s ease-in-out infinite; }
+  .cgroup.g2 { animation-delay: 1.6s; }
+  .cgroup.g3 { animation-delay: 2.8s; }
+  @keyframes cblink {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+  .meteor {
+    position: absolute;
+    width: 90px;
+    height: 1.5px;
+    background: linear-gradient(90deg, rgba(244,236,200,0), rgba(244,236,200,0.9));
+    border-radius: 2px;
+    opacity: 0;
+  }
+  @keyframes shoot {
+    0%   { opacity: 0; transform: translate(0,0) rotate(20deg); }
+    8%   { opacity: 1; }
+    30%  { opacity: 1; }
+    50%  { opacity: 0; transform: translate(240px,88px) rotate(20deg); }
+    100% { opacity: 0; }
+  }
+  .moon {
+    position: fixed;
+    top: 48px;
+    right: 60px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: #f4ecc8;
+    box-shadow: -14px 4px 0 2px #1a1633;
+    opacity: 0.85;
+    z-index: 0;
+  }
+  #app {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 640px;
+    display: flex;
+    flex-direction: column;
+    height: 92vh;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    color: #f4ecc8;
+  }
+  header .tagline {
+    font-size: 13px;
+    font-style: italic;
+    color: #b9aef0;
+    margin-top: 6px;
+  }
+  #chat {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .msg {
+    max-width: 88%;
+    padding: 12px 16px;
+    border-radius: 14px;
+    line-height: 1.55;
+    font-size: 14.5px;
+    white-space: pre-wrap;
+  }
+  .msg.user {
+    align-self: flex-end;
+    background: var(--accent);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+  .msg.agent {
+    align-self: flex-start;
+    background: var(--accent-soft);
+    color: var(--ink);
+    border-bottom-left-radius: 4px;
+  }
+  .msg.system {
+    align-self: center;
+    color: var(--ink-soft);
+    font-size: 12.5px;
+    font-style: italic;
+  }
+
+  /* --- Card row: cards drawn during a reading, laid out like a real spread --- */
+  .card-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+  .card-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 96px;
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+    animation: cardReveal 0.5s ease forwards;
+  }
+  .card-item img {
+    width: 96px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 6px rgba(83, 74, 183, 0.15);
+    background: #fff;
+  }
+  .card-item .card-label {
+    margin-top: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--title, var(--accent));
+    text-align: center;
+    line-height: 1.3;
+  }
+  @keyframes cardReveal {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  #inputRow {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  #inputRow input {
+    flex: 1;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    font-size: 14.5px;
+    background: var(--card);
+    color: var(--ink);
+  }
+  #inputRow button {
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    background: var(--accent);
+    color: #fff;
+    font-size: 14.5px;
+    cursor: pointer;
+  }
+  #inputRow button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+</style>
+</head>
+<body>
+<div class="sky" id="sky"></div>
+<svg class="constellations" viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice">
+  <g class="cgroup">
+    <path class="cline" d="M120 90 L150 150 L160 250 M200 80 L220 145 L235 245 M150 150 L220 145 M160 250 L235 245"/>
+    <g fill="#f4ecc8">
+      <path d="M120 84 L126 90 L120 96 L114 90 Z"/>
+      <path d="M200 74 L206 80 L200 86 L194 80 Z"/>
+      <path d="M150 144 L156 150 L150 156 L144 150 Z"/>
+      <path d="M220 139 L226 145 L220 151 L214 145 Z"/>
+      <path d="M160 244 L166 250 L160 256 L154 250 Z"/>
+      <path d="M235 239 L241 245 L235 251 L229 245 Z"/>
+    </g>
+  </g>
+  <g class="cgroup g2">
+    <path class="cline" d="M160 470 L230 520 L290 560 L370 585 M230 520 L265 620"/>
+    <g fill="#f4ecc8">
+      <path d="M160 464 L166 470 L160 476 L154 470 Z"/>
+      <path d="M230 514 L236 520 L230 526 L224 520 Z"/>
+      <path d="M290 554 L296 560 L290 566 L284 560 Z"/>
+      <path d="M370 579 L376 585 L370 591 L364 585 Z"/>
+      <path d="M265 614 L271 620 L265 626 L259 620 Z"/>
+    </g>
+  </g>
+  <g class="cgroup g3">
+    <path class="cline" d="M1120 560 L1210 540 L1300 580 M1210 540 L1200 640 M1300 580 L1320 660"/>
+    <g fill="#f4ecc8">
+      <path d="M1120 554 L1126 560 L1120 566 L1114 560 Z"/>
+      <path d="M1210 534 L1216 540 L1210 546 L1204 540 Z"/>
+      <path d="M1300 574 L1306 580 L1300 586 L1294 580 Z"/>
+      <path d="M1200 634 L1206 640 L1200 646 L1194 640 Z"/>
+      <path d="M1320 654 L1326 660 L1320 666 L1314 660 Z"/>
+    </g>
+  </g>
+</svg>
+<div class="moon"></div>
+<div id="meteorHost" class="sky"></div>
+<div id="app">
+  <header>
+    <h1>Reflective Decision Companion</h1>
+    <div class="tagline">"The cards are a mirror, not a prophecy."</div>
+  </header>
+  <div id="chat"></div>
+  <div id="inputRow">
+    <input id="msgInput" type="text" placeholder="What's on your mind?" autocomplete="off">
+    <button id="sendBtn">Send</button>
+  </div>
+</div>
+
+<script>
+// ---- Configuration ----
+const API_BASE = "http://127.0.0.1:8000";
+const APP_NAME = "tarot_agent";
+
+const userId = "web_user_" + Math.random().toString(36).slice(2, 8);
+const sessionId = "session_" + Math.random().toString(36).slice(2, 8);
+
+const chatEl = document.getElementById("chat");
+const inputEl = document.getElementById("msgInput");
+const sendBtn = document.getElementById("sendBtn");
+
+// Strips any markdown image syntax the agent's text might contain, leaving
+// just the card name inline (kept for readability; no longer relied upon
+// for actually displaying images — see extractCardsFromEvents below).
+function cleanText(text) {
+  return text.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt) => alt);
+}
+
+// The reliable path: scan ALL returned events (regardless of role) for
+// tool-call results from draw_card / draw_lenormand_card. ADK always wraps
+// a tool's raw return value into {"result": <value>} when building the
+// functionResponse — confirmed directly from google-adk's source
+// (flows/llm_flows/functions.py, __build_response_event). This does NOT
+// depend on the agent choosing to mention the cards in its prose, so it
+// works every time, unlike parsing markdown out of free-form text.
+function extractCardsFromEvents(events) {
+  const cards = [];
+  for (const event of events) {
+    const content = event.content;
+    if (!content || !content.parts) continue;
+    for (const part of content.parts) {
+      const fr = part.functionResponse;
+      if (!fr) continue;
+      if (fr.name !== "draw_card" && fr.name !== "draw_lenormand_card") continue;
+      const result = fr.response && fr.response.result;
+      if (Array.isArray(result)) {
+        for (const card of result) {
+          if (card && card.image) cards.push(card);
+        }
+      }
+    }
+  }
+  return cards;
+}
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function addMessage(role, rawText, cards) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "msg " + role;
+
+  if (role === "agent") {
+    const textEl = document.createElement("div");
+    textEl.textContent = cleanText(rawText);
+    wrapper.appendChild(textEl);
+
+    if (cards && cards.length > 0) {
+      const row = document.createElement("div");
+      row.className = "card-row";
+      cards.forEach((c, i) => {
+        const item = document.createElement("div");
+        item.className = "card-item";
+        item.style.animationDelay = (i * 0.15) + "s";
+        const img = document.createElement("img");
+        img.src = c.image;
+        img.alt = c.name;
+        img.onerror = () => { item.style.display = "none"; };
+        const label = document.createElement("div");
+        label.className = "card-label";
+        label.textContent = c.name + (c.orientation ? ` (${c.orientation})` : "");
+        item.appendChild(img);
+        item.appendChild(label);
+        row.appendChild(item);
+      });
+      wrapper.appendChild(row);
+    }
+  } else {
+    wrapper.textContent = rawText;
+  }
+
+  chatEl.appendChild(wrapper);
+  chatEl.scrollTop = chatEl.scrollHeight;
+  return wrapper;
+}
+
+async function ensureSession() {
+  const res = await fetch(
+    `${API_BASE}/apps/${APP_NAME}/users/${userId}/sessions/${sessionId}`,
+    { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) }
+  );
+  if (!res.ok) {
+    throw new Error(`Failed to create session (status ${res.status}). Is 'adk api_server' running on ${API_BASE}?`);
+  }
+}
+
+async function sendMessage(text) {
+  const res = await fetch(`${API_BASE}/run`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      app_name: APP_NAME,
+      user_id: userId,
+      session_id: sessionId,
+      new_message: { role: "user", parts: [{ text: text }] },
+    }),
+  });
+  if (!res.ok) {
+    throw new Error(`Request failed (status ${res.status}).`);
+  }
+  const events = await res.json();
+
+  let combined = "";
+  for (const event of events) {
+    const content = event.content;
+    if (!content || content.role !== "model" || !content.parts) continue;
+    for (const part of content.parts) {
+      if (part.text) combined += part.text;
+    }
+  }
+
+  const cards = extractCardsFromEvents(events);
+  return { text: combined.trim(), cards };
+}
+
+let sessionReady = false;
+
+async function handleSend() {
+  const text = inputEl.value.trim();
+  if (!text) return;
+  inputEl.value = "";
+  sendBtn.disabled = true;
+  addMessage("user", text);
+
+  try {
+    if (!sessionReady) {
+      await ensureSession();
+      sessionReady = true;
+    }
+    const thinking = addMessage("system", "…thinking…");
+    const { text: reply, cards } = await sendMessage(text);
+    thinking.remove();
+    addMessage("agent", reply || "(no response text — check the terminal running api_server for errors)", cards);
+  } catch (err) {
+    addMessage("system", "Error: " + err.message);
+  } finally {
+    sendBtn.disabled = false;
+    inputEl.focus();
+  }
+}
+
+sendBtn.addEventListener("click", handleSend);
+inputEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") handleSend();
+});
+
+// --- Generate a scattering of stars for the background atmosphere ---
+function generateStars() {
+  const sky = document.getElementById("sky");
+  const count = 60;
+  for (let i = 0; i < count; i++) {
+    const star = document.createElement("div");
+    star.className = "star";
+    const size = Math.random() < 0.85 ? (1 + Math.random() * 1.5) : (2 + Math.random() * 1.5);
+    star.style.width = size + "px";
+    star.style.height = size + "px";
+    star.style.left = Math.random() * 100 + "%";
+    star.style.top = Math.random() * 100 + "%";
+    star.style.animationDelay = (Math.random() * 4) + "s";
+    sky.appendChild(star);
+  }
+}
+generateStars();
+
+// --- Periodic shooting stars (kept to the side margins so they don't
+//     vanish behind the opaque chat card in the center) ---
+function launchMeteor() {
+  const host = document.getElementById("meteorHost");
+  const m = document.createElement("div");
+  m.className = "meteor";
+  // Alternate sides: spawn near the left edge or the right edge, in the
+  // open sky beside the chat card — never starting behind it.
+  const onLeft = Math.random() < 0.5;
+  m.style.left = onLeft ? (1 + Math.random() * 8) + "%" : (72 + Math.random() * 10) + "%";
+  m.style.top = (6 + Math.random() * 30) + "%";
+  m.style.animation = "shoot 1.9s ease-out";
+  host.appendChild(m);
+  setTimeout(() => m.remove(), 2100);
+}
+setTimeout(launchMeteor, 1200);
+setInterval(launchMeteor, 6500);
+
+addMessage("system", "Connecting to your agent — type a question below to begin.");
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+<svg width="200" height="320" viewBox="0 0 200 320" xmlns="http://www.w3.org/2000/svg">
+<rect x="4" y="4" width="192" height="312" rx="14" fill="#EEEDFE" stroke="#534AB7" stroke-width="2"/>
+<circle cx="28" cy="28" r="16" fill="#534AB7"/>
+<text x="28" y="33" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="14" font-weight="600" fill="#ffffff">5</text>
+<g transform="translate(100,150)" stroke="#3C3489" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="0" cy="-15" r="30"/><rect x="-6" y="15" width="12" height="30" fill="#3C3489" stroke="none"/>
+</g>
+<rect x="14" y="256" width="172" height="46" rx="8" fill="#534AB7"/>
+<text x="100" y="285" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="600" fill="#ffffff">Tree</text>
+</svg>

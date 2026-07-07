@@ -1,0 +1,5 @@
+.env
+readings.json
+__pycache__/
+.adk/
+frontend/index_OLD*.html
