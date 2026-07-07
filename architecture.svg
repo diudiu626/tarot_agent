@@ -1,0 +1,70 @@
+<svg width="680" height="700" viewBox="0 0 680 700" xmlns="http://www.w3.org/2000/svg" role="img">
+<title>Reflective Decision Companion architecture</title>
+<desc>Flowchart showing the agent's reading pipeline: a user question passes through a silent memory check, routes to either a Tarot or Lenormand skill, pauses for the user's first reaction, produces a constitution-governed interpretation, then saves the reading to memory and responds.</desc>
+<defs>
+<marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+<path d="M2 1L8 5L2 9" fill="none" stroke="#5F5E5A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</marker>
+</defs>
+
+<g font-family="Helvetica, Arial, sans-serif">
+
+<!-- User's question -->
+<rect x="240" y="40" width="200" height="44" rx="8" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+<text x="340" y="66" text-anchor="middle" font-size="14" font-weight="500" fill="#2C2C2A">User's question</text>
+<line x1="340" y1="84" x2="340" y2="136" stroke="#5F5E5A" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+<!-- Check memory -->
+<rect x="200" y="140" width="280" height="56" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="340" y="160" text-anchor="middle" font-size="14" font-weight="500" fill="#04342C">Check memory</text>
+<text x="340" y="178" text-anchor="middle" font-size="12" fill="#085041">silently, for relevant past readings</text>
+
+<line x1="340" y1="196" x2="340" y2="222" stroke="#5F5E5A" stroke-width="0.5"/>
+<path d="M340 224L190 250" fill="none" stroke="#5F5E5A" stroke-width="0.5" marker-end="url(#arrow)"/>
+<path d="M340 224L490 250" fill="none" stroke="#5F5E5A" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+<!-- Tarot skill -->
+<rect x="65" y="252" width="250" height="56" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="190" y="272" text-anchor="middle" font-size="14" font-weight="500" fill="#26215C">Tarot skill</text>
+<text x="190" y="290" text-anchor="middle" font-size="12" fill="#3C3489">inner, psychological questions</text>
+
+<!-- Lenormand skill -->
+<rect x="365" y="252" width="250" height="56" rx="10" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="490" y="272" text-anchor="middle" font-size="14" font-weight="500" fill="#26215C">Lenormand skill</text>
+<text x="490" y="290" text-anchor="middle" font-size="12" fill="#3C3489">concrete, event questions</text>
+
+<path d="M190 308L340 334" fill="none" stroke="#5F5E5A" stroke-width="0.5" marker-end="url(#arrow)"/>
+<path d="M490 308L340 334" fill="none" stroke="#5F5E5A" stroke-width="0.5" marker-end="url(#arrow)"/>
+<line x1="340" y1="336" x2="340" y2="362" stroke="#5F5E5A" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+<!-- Human-in-the-loop -->
+<rect x="210" y="364" width="260" height="56" rx="10" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
+<text x="340" y="384" text-anchor="middle" font-size="14" font-weight="500" fill="#412402">Human-in-the-loop</text>
+<text x="340" y="402" text-anchor="middle" font-size="12" fill="#633806">"what's your first reaction?"</text>
+<line x1="340" y1="420" x2="340" y2="474" stroke="#5F5E5A" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+<!-- Interpretation -->
+<rect x="190" y="476" width="300" height="56" rx="10" fill="#FAECE7" stroke="#993C1D" stroke-width="0.5"/>
+<text x="340" y="496" text-anchor="middle" font-size="14" font-weight="500" fill="#4A1B0C">Interpretation</text>
+<text x="340" y="514" text-anchor="middle" font-size="12" fill="#712B13">constitution + five-step output shape</text>
+<line x1="340" y1="532" x2="340" y2="586" stroke="#5F5E5A" stroke-width="0.5" marker-end="url(#arrow)"/>
+
+<!-- Save + respond -->
+<rect x="200" y="588" width="280" height="56" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="340" y="608" text-anchor="middle" font-size="14" font-weight="500" fill="#04342C">Save + respond</text>
+<text x="340" y="626" text-anchor="middle" font-size="12" fill="#085041">six-field memory record persisted</text>
+
+<!-- Legend -->
+<rect x="40" y="660" width="12" height="12" rx="3" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+<text x="58" y="670" font-size="12" fill="#444441">start / end</text>
+<rect x="150" y="660" width="12" height="12" rx="3" fill="#E1F5EE" stroke="#0F6E56" stroke-width="0.5"/>
+<text x="168" y="670" font-size="12" fill="#444441">memory</text>
+<rect x="250" y="660" width="12" height="12" rx="3" fill="#EEEDFE" stroke="#534AB7" stroke-width="0.5"/>
+<text x="268" y="670" font-size="12" fill="#444441">skill</text>
+<rect x="340" y="660" width="12" height="12" rx="3" fill="#FAEEDA" stroke="#854F0B" stroke-width="0.5"/>
+<text x="358" y="670" font-size="12" fill="#444441">human-in-the-loop</text>
+<rect x="500" y="660" width="12" height="12" rx="3" fill="#FAECE7" stroke="#993C1D" stroke-width="0.5"/>
+<text x="518" y="670" font-size="12" fill="#444441">interpretation</text>
+
+</g>
+</svg>
